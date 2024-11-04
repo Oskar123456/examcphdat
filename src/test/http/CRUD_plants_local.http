@@ -1,0 +1,155 @@
+### 
+### Cph Business School....
+### Datamatiker 3. sem.....
+### -----------------------
+### Oskar Bahner Hansen....
+### cph-oh82@cphbusiness.dk
+### 2024-11-04.............
+### -----------------------
+###
+ 
+@url=http://localhost:9999/api
+
+###
+# @name [Security] LOGIN FAIL
+
+POST {{url}}/auth/login
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "lol"
+}
+
+> {%
+    client.test("admin authorization supposed to fail", function() {
+        client.assert(response.status === 401, "response status is not 401");
+    });
+%}
+
+###
+# @name [Security] LOGIN
+
+POST {{url}}/auth/login
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "admin"
+}
+
+> {%
+    client.global.set("JWT", response.body.token);
+%}
+
+###
+# @name [Security] TEST USER PRIVS FAIL
+
+GET {{url}}/protected/user_demo
+Authorization: Bearer "LOL"
+
+> {%
+    client.test("admin authorization", function() {
+        client.assert(response.status === 401, "response status is not 401");
+    });
+%}
+
+###
+# @name [Security] TEST ADMIN PRIVS FAIL
+
+GET {{url}}/protected/admin_demo
+Authorization: Bearer "LOL"
+
+> {%
+    client.test("admin authorization", function() {
+        client.assert(response.status === 401, "response status is not 401");
+    });
+%}
+
+###
+# @name [Security] TEST ADMIN PRIVS
+
+GET {{url}}/protected/admin_demo
+Authorization: Bearer {{JWT}}
+
+> {%
+    client.test("admin authorization", function() {
+        client.assert(response.status === 200, "response status is not 200");
+    });
+%}
+
+
+###
+# @name [API] GET ALL
+
+GET {{url}}/plants
+
+> {%
+    client.test("get all", function() {
+        client.assert(response.status === 200, "response status is not 200 " + response.status);
+    });
+%}
+
+###
+# @name [API + SECURITY] POST PLANT NO AUTHORIZATION
+
+POST {{url}}/plants
+Content-Type: application/json
+
+< ./../resources/json/plant1.json
+
+> {%
+    client.test("post plant w/o admin jwt", function() {
+        client.assert(response.status === 401, "response status is not 401 " + response.status);
+    });
+%}
+
+###
+# @name [API] POST PLANT
+
+POST {{url}}/plants
+Content-Type: application/json
+Authorization: Bearer {{JWT}}
+
+< ./../resources/json/plant1.json
+
+> {%
+    client.global.set("posted_plant_id", response.body.id);
+    client.test("post plant", function() {
+        client.assert(response.status === 201, "response status is not 201 " + response.status);
+    });
+%}
+
+###
+# @name [API] GET POSTED
+
+GET {{url}}/plants/{{posted_plant_id}}
+
+> {%
+    client.test("get posted", function() {
+        client.assert(response.status === 200, "response status is not correct " + response.status);
+    });
+%}
+
+###
+# @name [API] GET FAIL 400
+
+GET {{url}}/plants/fail
+
+> {%
+    client.test("get invalid input", function() {
+        client.assert(response.status === 400, "response status is not correct " + response.status);
+    });
+%}
+
+###
+# @name [API] GET FAIL 404
+
+GET {{url}}/plants/240345
+
+> {%
+    client.test("get not found", function() {
+        client.assert(response.status === 404, "response status is not correct " + response.status);
+    });
+%}
+

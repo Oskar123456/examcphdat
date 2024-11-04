@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>CSS Template</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/x-icon" href="/Debian-icon-1200704657.png">
+<link rel="stylesheet" href="/listall.css">
+</head>
+<body onload="javascript:fetchPage()">
+
+<header>
+  <h2>The Poem Database</h2>
+</header>
+
+<nav>
+    <a href="/"><h2>The Poem Database</h2></a> 
+    <ul>
+        <li>
+            <a href="/poems?all=true">API</a>
+        </li>
+        <li>
+            <a href="/listall">Browse</a>
+        </li>
+        <li>
+            <form action="/poem">
+                <input type="text" id="id" name="id" value=""><br>
+                <input type="submit" value="&#x1F50E;">
+            </form> 
+        </li>
+    </ul>
+</nav>
+
+<div id="main">
+    <div id="poem_on_display" class="display">
+        <ul id="poem_list"></ul>
+        <div class="button_div">
+            <button id="reroll" type="button">read another</button>
+        </div>
+    </div>
+</div>
+
+
+<footer>
+    <a href="/">BACK</a>
+</footer>
+
+<script type="text/javascript" src="/listall.js"></script>
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
