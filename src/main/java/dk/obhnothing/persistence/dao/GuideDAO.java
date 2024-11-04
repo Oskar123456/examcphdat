@@ -43,8 +43,19 @@ public class GuideDAO implements IDAO<GuideDTO, Integer>
 
     @Override
     public GuideDTO getById(Integer id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getById'");
+        try (EntityManager EM = EMF.createEntityManager())
+        {
+            EM.getTransaction().begin();
+            return Mapper.Guide_GuideDTO(
+                    EM.createQuery("from Guide where id = :id", Guide.class)
+                    .setParameter("id", id).getSingleResult());
+        }
+
+        catch (Exception e)
+        {
+            logger.info(e.getMessage());
+            return null;
+        }
     }
     @Override
     public GuideDTO create(GuideDTO dto)

@@ -24,20 +24,6 @@ public class TripDAO implements IDAO<TripDTO, Integer>, ITripGuideDAO
     private static EntityManagerFactory EMF;
     public static void Init(EntityManagerFactory e) {EMF = e;}
 
-    public void deleteAll()
-    {
-        try (EntityManager EM = EMF.createEntityManager())
-        {
-            EM.getTransaction().begin();
-            EM.createQuery("delete t from Trip t", Trip.class).executeUpdate();
-        }
-
-        catch (Exception e)
-        {
-            logger.info(e.getMessage());
-        }
-    }
-
     public List<TripDTO> getAll()
     {
         try (EntityManager EM = EMF.createEntityManager())

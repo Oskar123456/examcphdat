@@ -29,8 +29,10 @@ public class TripRoutes
             get("/trip", tripController::getAll, Role.ANYONE);
             get("/trips/{id}", tripController::getById, Role.ANYONE);
             get("/trip/{id}", tripController::getById, Role.ANYONE);
-            get("/trips/type/{type}", tripController::getByType, Role.ANYONE);
-            get("/trip/type/{type}", tripController::getByType, Role.ANYONE);
+            get("/trips/category/{category}", tripController::filterByCategory, Role.ANYONE);
+            get("/trip/category/{category}", tripController::filterByCategory, Role.ANYONE);
+            get("/trips/guidespricesum", tripController::getSumOfEachGuide, Role.ANYONE);
+            get("/trip/guidespricesum", tripController::getSumOfEachGuide, Role.ANYONE);
 
             post("/trips", tripController::create, Role.ADMIN);
             post("/trip", tripController::create, Role.ADMIN);

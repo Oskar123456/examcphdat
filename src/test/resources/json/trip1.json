@@ -6,7 +6,7 @@
     "name":"TEST DATA",
     "price":18734.093382549774,
     "category":"BADEFERIE",
-    "guide":{"id":353,
+    "guide":{"id":null,
         "firstname":"Dwight",
         "lastname":"Gusikowski",
         "email":"Dwight@Beier, Wuckert and Hoeger.sa", 

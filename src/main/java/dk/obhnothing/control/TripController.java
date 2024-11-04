@@ -1,14 +1,20 @@
 package dk.obhnothing.control;
 
 import dk.obhnothing.persistence.HibernateConfig;
+import dk.obhnothing.persistence.dao.GuideDAO;
 import dk.obhnothing.persistence.dao.TripDAO;
+import dk.obhnothing.persistence.dto.GuideDTO;
 import dk.obhnothing.persistence.dto.TripDTO;
+import dk.obhnothing.persistence.ent.Guide;
+import dk.obhnothing.persistence.enums.Category;
 import dk.obhnothing.persistence.service.Mapper;
 import dk.obhnothing.persistence.service.Populator;
 import dk.obhnothing.security.enums.Role;
 import dk.obhnothing.security.exceptions.ApiException;
 import io.javalin.apibuilder.EndpointGroup;
 import io.javalin.http.Context;
+
+import java.util.HashMap;
 import java.util.List;
 
 import static io.javalin.apibuilder.ApiBuilder.delete;
@@ -25,32 +31,15 @@ public class TripController
 
     private int num_plants = 10;
     private TripDAO dao;
+    private GuideDAO guide_dao;
     private Logger logger = LoggerFactory.getLogger(TripController.class);
 
     public TripController()
     {
         TripDAO.Init(HibernateConfig.getEntityManagerFactory());
+        GuideDAO.Init(HibernateConfig.getEntityManagerFactory());
         dao = new TripDAO();
-    }
-
-    public EndpointGroup getRoutes()
-    {
-        return () -> {
-            get("/trips", this::getAll, Role.ANYONE);
-            get("/trip", this::getAll, Role.ANYONE);
-            get("/trips/{id}", this::getById, Role.ANYONE);
-            get("/trip/{id}", this::getById, Role.ANYONE);
-            get("/trips/type/{type}", this::getByType, Role.ANYONE);
-            get("/trip/type/{type}", this::getByType, Role.ANYONE);
-
-            post("/trips", this::create, Role.ADMIN);
-            post("/trip", this::create, Role.ADMIN);
-            put("/trips/{id}", this::update, Role.ADMIN);
-            put("/trip/{id}", this::update, Role.ADMIN);
-            post("/trips/populate", this::populate, Role.ADMIN);
-            put("/trips/{tripId}/guides/{guideId}", this::addguide, Role.ADMIN);
-            put("/trip/{tripId}/guides/{guideId}", this::addguide, Role.ADMIN);
-        };
+        guide_dao = new GuideDAO();
     }
 
     public void addguide(Context ctx)
@@ -146,10 +135,38 @@ public class TripController
         }
     }
 
-    public void getByType(Context ctx)
+    public void filterByCategory(Context ctx)
     {
         try
         {
+            Category cat = Category.valueOf(ctx.pathParam("category"));
+            List<TripDTO> dtos = dao.getAll();
+            ctx.json(dtos.stream().filter(t -> t.category == cat).toList());
+            ctx.status(200);
+        }
+        catch (NullPointerException e)
+        {
+            logger.info(e.getMessage());
+            throw new ApiException(400, e.getMessage());
+        }
+        catch (Exception e)
+        {
+            logger.info(e.getMessage());
+            throw new ApiException(404, e.getMessage());
+        }
+    }
+
+    public void getSumOfEachGuide(Context ctx)
+    {
+        try
+        {
+            List<TripDTO> dtos = dao.getAll();
+            HashMap<Integer, Double> pmap = new HashMap<>();
+            for (TripDTO d : dtos) {
+                if (d.guide != null && d.guide.id != null && d.price != null)
+                    pmap.put(d.guide.id, d.price + (pmap.containsKey(d.guide.id) ? 0 : pmap.get(d.guide.id)));
+            }
+            ctx.json(pmap);
             ctx.status(200);
         }
         catch (NullPointerException e)

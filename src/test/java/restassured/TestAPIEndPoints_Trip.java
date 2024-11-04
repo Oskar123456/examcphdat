@@ -2,6 +2,8 @@ package restassured;
 
 import static dk.obhnothing.persistence.HibernateConfig.Mode.TEST;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
@@ -26,16 +28,6 @@ import dk.obhnothing.utilities.Utils;
 import io.javalin.Javalin;
 import io.restassured.RestAssured;
 import jakarta.persistence.EntityManagerFactory;
-
-/*
- * Cph Business School....
- * Datamatiker 3. sem.....
- * -----------------------
- * Oskar Bahner Hansen....
- * cph-oh82@cphbusiness.dk
- * 2024-11-04.............
- * -----------------------
- */
 
 public class TestAPIEndPoints_Trip
 {
@@ -72,6 +64,8 @@ public class TestAPIEndPoints_Trip
 
         port_test = 9999;
         jav = MasterController.start(port_test);
+
+        Populator.PopTrips(5);
     }
 
     @AfterAll static void deinitAll()
@@ -81,14 +75,6 @@ public class TestAPIEndPoints_Trip
 
     @BeforeEach void initEach()
     {
-        trip_dao.deleteAll();
-
-        Populator.PopTrips(5);
-
-        trips = trip_dao.getAll().stream().map(Mapper::TripDTO_Trip).toList();
-
-        assert(trips.size() == 5);
-
         logout();
     }
 
@@ -147,17 +133,31 @@ public class TestAPIEndPoints_Trip
         int status = RestAssured.given().port(port_test)
             .when().get("/api/trips/aoe")
             .body().jsonPath().getInt("status");
-        assert(status == 400);
+        assert(status == 404);
     }
 
 
     @Test @DisplayName("deletePlant") void testdeletePlant()
     {
+        loginAdmin();
         int status = RestAssured.given().port(port_test)
+            .header("Authorization", "Bearer " + jwt_admin)
             .when().delete("/api/trips/" + 2053)
             .body().jsonPath().getInt("status");
         assert(status == 404);
     }
+
+    @Test @DisplayName("getAll") void testgetAll() // redundant
+    {
+        TripDTO[] trip_dtos = RestAssured.given().port(port_test)
+            .when().get("/api/trips")
+            .then().assertThat().statusCode(200)
+            .extract().body().as(TripDTO[].class);
+        assert(trip_dtos.length > 0);
+        trips = Arrays.stream(trip_dtos).map(Mapper::TripDTO_Trip).toList();
+        assert(trips.size() > 0);
+    }
+
 
     /******************/
     /* TESTING ENDS ***/

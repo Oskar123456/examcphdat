@@ -89,7 +89,7 @@ Content-Type: application/json
 < ./../resources/json/trip1.json
 
 > {%
-    client.test("post plant w/o admin jwt", function() {
+    client.test("post trip w/o admin jwt", function() {
         client.assert(response.status === 401, "response status is not 401 " + response.status);
     });
 %}
@@ -105,7 +105,7 @@ Authorization: Bearer {{JWT}}
 
 > {%
     client.global.set("trip_id", response.body.id);
-    client.test("post plant", function() {
+    client.test("post trip", function() {
         client.assert(response.status === 201, "response status is not 201 " + response.status);
     });
 %}
@@ -152,8 +152,30 @@ Content-Type: application/json
 < ./../resources/json/guide1.json
 
 > {%
-    client.test("post plant w/o admin jwt", function() {
+    client.test("post trip w/o admin jwt", function() {
         client.assert(response.status === 200, "response status is not 200 " + response.status);
+    });
+%}
+
+###
+# @name [API] GET BY CAT
+
+GET {{url}}/trips/category/BADEFERIE
+
+> {%
+    client.test("get by cat", function() {
+        client.assert(response.status === 200, "response status is not correct " + response.status);
+    });
+%}
+
+###
+# @name [API] GET BY SUMS
+
+GET {{url}}/trips/guidespricesum
+
+> {%
+    client.test("get by sums", function() {
+        client.assert(response.status === 200, "response status is not correct " + response.status);
     });
 %}
 
