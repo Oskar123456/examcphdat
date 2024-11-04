@@ -13,7 +13,7 @@ import jakarta.persistence.EntityManagerFactory;
 public class UserDAO
 {
 
-    private static Logger logger = LoggerFactory.getLogger(DoctorDAO_DB.class);
+    private static Logger logger = LoggerFactory.getLogger(UserDAO.class);
     private static EntityManagerFactory EMF;
     public static void Init(EntityManagerFactory e) {EMF = e;}
 

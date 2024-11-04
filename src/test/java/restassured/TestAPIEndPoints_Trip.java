@@ -15,9 +15,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dk.obhnothing.control.MasterController;
 import dk.obhnothing.persistence.HibernateConfig;
-import dk.obhnothing.persistence.dao.HeadlineDAO;
+import dk.obhnothing.persistence.dao.TripDAO;
 import dk.obhnothing.persistence.dao.UserDAO;
-import dk.obhnothing.persistence.ent.Headline;
+import dk.obhnothing.persistence.dto.TripDTO;
+import dk.obhnothing.persistence.ent.Trip;
+import dk.obhnothing.persistence.service.Mapper;
+import dk.obhnothing.persistence.service.Populator;
+import dk.obhnothing.security.exceptions.ApiException;
 import dk.obhnothing.utilities.Utils;
 import io.javalin.Javalin;
 import io.restassured.RestAssured;
@@ -33,18 +37,18 @@ import jakarta.persistence.EntityManagerFactory;
  * -----------------------
  */
 
-public class TestAPIEndPoints_Headline
+public class TestAPIEndPoints_Trip
 {
 
     static Javalin jav;
     static EntityManagerFactory EMF;
-    static HeadlineDAO headline_dao;
+    static TripDAO trip_dao;
     static String jwt_user = "";
     static String jwt_admin = "";
     static int port_test;
     static ObjectMapper jsonMapper;
     static int n_plants = 10;
-    static List<Headline> headlines;
+    static List<Trip> trips;
 
     /******************/
     /* SETUP/TEARDOWN */
@@ -64,8 +68,7 @@ public class TestAPIEndPoints_Headline
         UserDAO.Init(EMF);
         UserDAO.Populate();
 
-        HeadlineDAO.Init(EMF);
-        headline_dao = new HeadlineDAO();
+        trip_dao = new TripDAO();
 
         port_test = 9999;
         jav = MasterController.start(port_test);
@@ -78,6 +81,14 @@ public class TestAPIEndPoints_Headline
 
     @BeforeEach void initEach()
     {
+        trip_dao.deleteAll();
+
+        Populator.PopTrips(5);
+
+        trips = trip_dao.getAll().stream().map(Mapper::TripDTO_Trip).toList();
+
+        assert(trips.size() == 5);
+
         logout();
     }
 
@@ -124,29 +135,28 @@ public class TestAPIEndPoints_Headline
     /* TASK 6 *********/
     /******************/
 
-    @Test @DisplayName("getAll") void testgetAll() // redundant
-    {
-        assert(false);
-    }
-
     @Test @DisplayName("getById") void testgetById()
     {
-        assert(false);
+        for (Trip t : trips) {
+            TripDTO trip_dto = RestAssured.given().port(port_test)
+                .when().get("/api/trips/" + t.id)
+                .then().assertThat().statusCode(200)
+                .extract().body().as(TripDTO.class);
+            assert(t.id.equals(trip_dto.id));
+        }
+        int status = RestAssured.given().port(port_test)
+            .when().get("/api/trips/aoe")
+            .body().jsonPath().getInt("status");
+        assert(status == 400);
     }
 
-    @Test @DisplayName("add without admin privilege") void testaddfail()
-    {
-        assert(false);
-    }
-
-    @Test @DisplayName("add with admin privilege") void testadd()
-    {
-        assert(false);
-    }
 
     @Test @DisplayName("deletePlant") void testdeletePlant()
     {
-        assert(false);
+        int status = RestAssured.given().port(port_test)
+            .when().delete("/api/trips/" + 2053)
+            .body().jsonPath().getInt("status");
+        assert(status == 404);
     }
 
     /******************/
@@ -174,4 +184,3 @@ public class TestAPIEndPoints_Headline
     static void logout() { jwt_user = ""; jwt_admin = ""; }
 
 }
-

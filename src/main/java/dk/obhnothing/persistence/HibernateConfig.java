@@ -9,26 +9,12 @@ import org.hibernate.service.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.obhnothing.persistence.ent.AppointmentEnt;
-import dk.obhnothing.persistence.ent.DoctorEnt;
-import dk.obhnothing.persistence.ent.Headline;
-import dk.obhnothing.persistence.ent.Plant;
-import dk.obhnothing.persistence.ent.Reseller;
-import dk.obhnothing.persistence.ent.Source;
+import dk.obhnothing.persistence.ent.Guide;
+import dk.obhnothing.persistence.ent.Trip;
 import dk.obhnothing.security.entities.Role;
 import dk.obhnothing.security.entities.User;
 import dk.obhnothing.utilities.Utils;
 import jakarta.persistence.EntityManagerFactory;
-
-/*
- * Cph Business School....
- * Datamatiker 3. sem.....
- * -----------------------
- * Oskar Bahner Hansen....
- * cph-oh82@cphbusiness.dk
- * 2024-11-04.............
- * -----------------------
- */
 
 public class HibernateConfig {
     private static Logger logger = LoggerFactory.getLogger(HibernateConfig.class);
@@ -42,12 +28,8 @@ public class HibernateConfig {
     private static void getAnnotationConfiguration(Configuration configuration) {
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Role.class);
-        configuration.addAnnotatedClass(DoctorEnt.class);
-        configuration.addAnnotatedClass(AppointmentEnt.class);
-        configuration.addAnnotatedClass(Plant.class);
-        configuration.addAnnotatedClass(Reseller.class);
-        configuration.addAnnotatedClass(Headline.class);
-        configuration.addAnnotatedClass(Source.class);
+        configuration.addAnnotatedClass(Trip.class);
+        configuration.addAnnotatedClass(Guide.class);
     }
 
     public static void Init(Mode mode) {

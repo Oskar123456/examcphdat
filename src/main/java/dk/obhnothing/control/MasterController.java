@@ -3,6 +3,8 @@ package dk.obhnothing.control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.obhnothing.persistence.dao.TripDAO;
+import dk.obhnothing.routes.TripRoutes;
 import dk.obhnothing.security.controllers.AccessController;
 import dk.obhnothing.security.exceptions.ApiException;
 import dk.obhnothing.security.exceptions.NotAuthorizedException;
@@ -13,28 +15,16 @@ import io.javalin.http.Context;
 import io.javalin.http.HttpResponseException;
 import io.javalin.http.UnauthorizedResponse;
 
-/*
- * Cph Business School....
- * Datamatiker 3. sem.....
- * -----------------------
- * Oskar Bahner Hansen....
- * cph-oh82@cphbusiness.dk
- * 2024-11-04.............
- * -----------------------
- */
-
 public class MasterController
 {
 
     private static Logger logger = LoggerFactory.getLogger(MasterController.class);
 
-    public static PlantControllerDB plantController;
-    public static HeadlineController headlineController;
+    public static GuideController guideController;
 
     public static Javalin start(int port)
     {
-        plantController = new PlantControllerDB();
-        headlineController = new HeadlineController();
+        guideController = new GuideController();
         Javalin jav = setup();
         jav.start(port);
         return jav;
@@ -53,8 +43,8 @@ public class MasterController
                 generalLogger(ctx, ms);
             });
             /* APP-SPECIFIC */
-            //config.router.apiBuilder(plantController.getRoutes());
-            config.router.apiBuilder(headlineController.getRoutes());
+            config.router.apiBuilder(TripRoutes.getRoutes());
+            config.router.apiBuilder(guideController.getRoutes());
         });
         /* EXCEPTIONS */
         AccessController accessController = new AccessController();

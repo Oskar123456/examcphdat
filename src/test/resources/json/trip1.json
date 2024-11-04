@@ -1,0 +1,17 @@
+{
+    "id":null,
+    "starttime":[2025, 2, 26, 10, 46, 19, 111967000],
+    "endtime":[2025, 4, 6, 10, 46, 19, 111967000],
+    "startposition":"TEST DATA",
+    "name":"TEST DATA",
+    "price":18734.093382549774,
+    "category":"BADEFERIE",
+    "guide":{"id":353,
+        "firstname":"Dwight",
+        "lastname":"Gusikowski",
+        "email":"Dwight@Beier, Wuckert and Hoeger.sa", 
+        "phone":"565.996.5731",
+        "yearsOfExperience":39,
+        "trips":null
+    }
+}

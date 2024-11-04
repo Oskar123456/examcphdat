@@ -15,9 +15,7 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dk.obhnothing.persistence.HibernateConfig;
-import dk.obhnothing.persistence.dao.PlantDAO;
 import dk.obhnothing.persistence.dao.UserDAO;
-import dk.obhnothing.persistence.ent.Plant;
 import dk.obhnothing.persistence.service.Mapper;
 import dk.obhnothing.utilities.Utils;
 import jakarta.persistence.EntityManagerFactory;

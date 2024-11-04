@@ -1,13 +1,3 @@
-### 
-### Cph Business School....
-### Datamatiker 3. sem.....
-### -----------------------
-### Oskar Bahner Hansen....
-### cph-oh82@cphbusiness.dk
-### 2024-11-04.............
-### -----------------------
-###
- 
 @url=http://localhost:9999/api
 
 ###
@@ -82,7 +72,7 @@ Authorization: Bearer {{JWT}}
 ###
 # @name [API] GET ALL
 
-GET {{url}}/plants
+GET {{url}}/trips
 
 > {%
     client.test("get all", function() {
@@ -91,12 +81,12 @@ GET {{url}}/plants
 %}
 
 ###
-# @name [API + SECURITY] POST PLANT NO AUTHORIZATION
+# @name [API + SECURITY] POST TRIP
 
-POST {{url}}/plants
+POST {{url}}/trips
 Content-Type: application/json
 
-< ./../resources/json/plant1.json
+< ./../resources/json/trip1.json
 
 > {%
     client.test("post plant w/o admin jwt", function() {
@@ -105,16 +95,16 @@ Content-Type: application/json
 %}
 
 ###
-# @name [API] POST PLANT
+# @name [API] POST TRIP
 
-POST {{url}}/plants
+POST {{url}}/trips
 Content-Type: application/json
 Authorization: Bearer {{JWT}}
 
-< ./../resources/json/plant1.json
+< ./../resources/json/trip1.json
 
 > {%
-    client.global.set("posted_plant_id", response.body.id);
+    client.global.set("trip_id", response.body.id);
     client.test("post plant", function() {
         client.assert(response.status === 201, "response status is not 201 " + response.status);
     });
@@ -123,7 +113,7 @@ Authorization: Bearer {{JWT}}
 ###
 # @name [API] GET POSTED
 
-GET {{url}}/plants/{{posted_plant_id}}
+GET {{url}}/trips/{{trip_id}}
 
 > {%
     client.test("get posted", function() {
@@ -134,7 +124,7 @@ GET {{url}}/plants/{{posted_plant_id}}
 ###
 # @name [API] GET FAIL 400
 
-GET {{url}}/plants/fail
+GET {{url}}/trips/fail
 
 > {%
     client.test("get invalid input", function() {
@@ -145,11 +135,25 @@ GET {{url}}/plants/fail
 ###
 # @name [API] GET FAIL 404
 
-GET {{url}}/plants/240345
+GET {{url}}/trips/240345
 
 > {%
     client.test("get not found", function() {
         client.assert(response.status === 404, "response status is not correct " + response.status);
+    });
+%}
+
+###
+# @name [API] PUT TRIP GUIDE
+
+PUT {{url}}/trips/{{trip_id}}
+Content-Type: application/json
+
+< ./../resources/json/guide1.json
+
+> {%
+    client.test("post plant w/o admin jwt", function() {
+        client.assert(response.status === 200, "response status is not 200 " + response.status);
     });
 %}
 
