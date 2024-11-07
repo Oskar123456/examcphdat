@@ -27,15 +27,27 @@ public class TripRoutes
         return () -> {
             get("/trips", tripController::getAll, Role.ANYONE);
             get("/trip", tripController::getAll, Role.ANYONE);
-            get("/trips/{id}", tripController::getById, Role.ANYONE);
-            get("/trip/{id}", tripController::getById, Role.ANYONE);
+            get("/trips/populate/{n}", tripController::populate, Role.ADMIN);
+            get("/trip/populate/{n}", tripController::populate, Role.ADMIN);
             get("/trips/category/{category}", tripController::filterByCategory, Role.ANYONE);
             get("/trip/category/{category}", tripController::filterByCategory, Role.ANYONE);
+            get("/trips/totalweight/{id}", tripController::getTotalPackingWeight, Role.ANYONE);
+            get("/trip/totalweight/{id}", tripController::getTotalPackingWeight, Role.ANYONE);
+            get("/trips/packinglist/{category}", tripController::getPackingList, Role.ANYONE);
+            get("/trip/packinglist/{category}", tripController::getPackingList, Role.ANYONE);
             get("/trips/guidespricesum", tripController::getSumOfEachGuide, Role.ANYONE);
             get("/trip/guidespricesum", tripController::getSumOfEachGuide, Role.ANYONE);
+            get("/trips/{id}", tripController::getById, Role.ANYONE);
+            get("/trip/{id}", tripController::getById, Role.ANYONE);
 
             post("/trips", tripController::create, Role.ADMIN);
             post("/trip", tripController::create, Role.ADMIN);
+
+            put("/trips/{id}", tripController::update, Role.ADMIN);
+            put("/trip/{id}", tripController::update, Role.ADMIN);
+
+            put("/trips/{tripId}/guides/{guideId}", tripController::addguide, Role.ADMIN);
+            put("/trip/{tripId}/guides/{guideId}", tripController::addguide, Role.ADMIN);
         };
     }
 

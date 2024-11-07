@@ -59,4 +59,29 @@ public class Populator
         return trips;
     }
 
+    public static List<Trip> createTrips(int n)
+    {
+        GuideDAO guide_dao = new GuideDAO();
+
+        List<Trip> trips = new ArrayList<>();
+        List<Guide> guides = new ArrayList<>();
+
+        guides = guide_dao.getAll().stream().map(Mapper::GuideDTO_Guide).toList();
+
+        for (int i = 0; i < n; i++) {
+            Trip t = new Trip();
+            t.id = null;
+            t.category = Category.values()[rng.nextInt(0, Category.values().length)];
+            t.starttime = LocalDateTime.now().plusDays(rng.nextInt(10, 500));
+            t.endtime = t.starttime.plusDays(rng.nextInt(10, 50));
+            t.startposition = nameGen.country().capital();
+            t.name = "Trip to " + t.startposition;
+            t.price = rng.nextDouble(1000, 100000);
+            t.guide = guides.get(rng.nextInt(0, guides.size()));
+            trips.add(t);
+        }
+
+        return trips;
+    }
+
 }

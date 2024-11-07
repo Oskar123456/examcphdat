@@ -81,7 +81,7 @@ GET {{url}}/trips
 %}
 
 ###
-# @name [API + SECURITY] POST TRIP
+# @name [API + SECURITY] POST TRIP FAIL
 
 POST {{url}}/trips
 Content-Type: application/json
@@ -95,7 +95,23 @@ Content-Type: application/json
 %}
 
 ###
-# @name [API] POST TRIP
+# @name [API] POST GUIDE SUCCESS
+
+POST {{url}}/guide
+Content-Type: application/json
+Authorization: Bearer {{JWT}}
+
+< ./../resources/json/guide_to_add_to_trip.json
+
+> {%
+    client.global.set("guide_id", response.body.id);
+    client.test("post guide should succeed", function() {
+        client.assert(response.status === 201, "response status is not 201 " + response.status);
+    });
+%}
+
+###
+# @name [API] POST TRIP SUCCESS
 
 POST {{url}}/trips
 Content-Type: application/json
@@ -105,13 +121,13 @@ Authorization: Bearer {{JWT}}
 
 > {%
     client.global.set("trip_id", response.body.id);
-    client.test("post trip", function() {
+    client.test("post trip should succeed", function() {
         client.assert(response.status === 201, "response status is not 201 " + response.status);
     });
 %}
 
 ###
-# @name [API] GET POSTED
+# @name [API] GET POSTED SUCCESS
 
 GET {{url}}/trips/{{trip_id}}
 
@@ -146,13 +162,12 @@ GET {{url}}/trips/240345
 ###
 # @name [API] PUT TRIP GUIDE
 
-PUT {{url}}/trips/{{trip_id}}
+PUT {{url}}/trips/{{trip_id}}/guides/{{guide_id}}
 Content-Type: application/json
-
-< ./../resources/json/guide1.json
+Authorization: Bearer {{JWT}}
 
 > {%
-    client.test("post trip w/o admin jwt", function() {
+    client.test("put guide to trip", function() {
         client.assert(response.status === 200, "response status is not 200 " + response.status);
     });
 %}
@@ -160,7 +175,9 @@ Content-Type: application/json
 ###
 # @name [API] GET BY CAT
 
-GET {{url}}/trips/category/BADEFERIE
+GET {{url}}/trips/category/beach
+Content-Type: application/json
+Authorization: Bearer {{JWT}}
 
 > {%
     client.test("get by cat", function() {
@@ -172,6 +189,8 @@ GET {{url}}/trips/category/BADEFERIE
 # @name [API] GET BY SUMS
 
 GET {{url}}/trips/guidespricesum
+Content-Type: application/json
+Authorization: Bearer {{JWT}}
 
 > {%
     client.test("get by sums", function() {
@@ -179,3 +198,65 @@ GET {{url}}/trips/guidespricesum
     });
 %}
 
+###
+# @name [API] GET PACKINGLIST LOWERCASE
+
+GET {{url}}/trips/packinglist/beach
+
+> {%
+    client.test("get packinglist", function() {
+        client.assert(response.status === 200, "response status is not correct " + response.status);
+    });
+%}
+
+###
+# @name [API] GET PACKINGLIST UPPERCASE
+
+GET {{url}}/trips/packinglist/BEACH
+Content-Type: application/json
+Authorization: Bearer {{JWT}}
+
+> {%
+    client.test("get packinglist", function() {
+        client.assert(response.status === 200, "response status is not correct " + response.status);
+    });
+%}
+
+###
+# @name [API] GET PACKINGLIST MIXCASE
+
+GET {{url}}/trips/packinglist/BEACH
+Content-Type: application/json
+Authorization: Bearer {{JWT}}
+
+> {%
+    client.test("get packinglist", function() {
+        client.assert(response.status === 200, "response status is not correct " + response.status);
+    });
+%}
+
+###
+# @name [API] GET TOTAL WEIGHT SUCCESS
+
+GET {{url}}/trips/totalweight/{{trip_id}}
+Content-Type: application/json
+Authorization: Bearer {{JWT}}
+
+> {%
+    client.test("get posted total weight", function() {
+        client.assert(response.status === 200, "response status is not correct " + response.status);
+    });
+%}
+
+###
+# @name [API] GET POPULATE
+
+GET {{url}}/trips/populate/1
+Content-Type: application/json
+Authorization: Bearer {{JWT}}
+
+> {%
+    client.test("get populate", function() {
+        client.assert(response.status === 200, "response status is not correct " + response.status);
+    });
+%}

@@ -24,6 +24,21 @@ public class TripDAO implements IDAO<TripDTO, Integer>, ITripGuideDAO
     private static EntityManagerFactory EMF;
     public static void Init(EntityManagerFactory e) {EMF = e;}
 
+    public void deleteAll()
+    {
+        try (EntityManager EM = EMF.createEntityManager())
+        {
+            EM.getTransaction().begin();
+            EM.createNativeQuery("TRUNCATE trip, guide CASCADE", Trip.class).executeUpdate();
+            EM.getTransaction().commit();
+        }
+
+        catch (Exception e)
+        {
+            logger.error(e.getMessage());
+        }
+    }
+
     public List<TripDTO> getAll()
     {
         try (EntityManager EM = EMF.createEntityManager())
@@ -63,7 +78,7 @@ public class TripDAO implements IDAO<TripDTO, Integer>, ITripGuideDAO
         {
             Trip t = Mapper.TripDTO_Trip(dto);
             EM.getTransaction().begin();
-            if (t.guide == null &&
+            if (t.guide == null ||
                     (t.guide.id == null || EM.find(Guide.class, t.guide.id) == null))
                 EM.persist(t.guide);
             EM.persist(t);
@@ -84,6 +99,7 @@ public class TripDAO implements IDAO<TripDTO, Integer>, ITripGuideDAO
         {
             EM.getTransaction().begin();
             Trip t = EM.find(Trip.class, id);
+            t.name = dto.name;
             EM.persist(t);
             EM.getTransaction().commit();
             return dto;

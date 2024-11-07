@@ -1,7 +1,5 @@
 package dk.obhnothing;
 
-import java.util.Random;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +8,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import dk.obhnothing.control.MasterController;
 import dk.obhnothing.persistence.HibernateConfig;
+import dk.obhnothing.persistence.dao.GuideDAO;
+import dk.obhnothing.persistence.dao.TripDAO;
 import dk.obhnothing.persistence.dao.UserDAO;
 import dk.obhnothing.persistence.service.Populator;
 import dk.obhnothing.utilities.Utils;
@@ -33,8 +33,11 @@ public class App
 
         UserDAO.Init(EMF);
         UserDAO.Populate();
-
-        Random rng = new Random();
+        GuideDAO.Init(EMF);
+        TripDAO.Init(EMF);
+        TripDAO tripDAO = new TripDAO();
+        if (tripDAO.getAll().size() < 5)
+            Populator.PopTrips(1);
 
         try
 
@@ -47,7 +50,6 @@ public class App
                     ? "development" : "deployed");
 
             /* TEST */
-            Populator.PopTrips(5);
 
 
 
@@ -57,7 +59,7 @@ public class App
 
         {
 
-            e.printStackTrace();
+            logger.error(e.getMessage());
             EMF.close();
 
         }

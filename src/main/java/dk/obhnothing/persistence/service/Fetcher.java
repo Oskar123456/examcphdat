@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import dk.obhnothing.persistence.dto.PackingList;
+import dk.obhnothing.persistence.enums.Category;
 import dk.obhnothing.utilities.Utils;
 
 public class Fetcher
@@ -22,28 +24,27 @@ public class Fetcher
     private static Logger logger = LoggerFactory.getLogger(Fetcher.class);
 
 
-//    public static HeadlineListDTO headlines(String country_code)
-//    {
-//        String api_key = Utils.getPropertyValue("NEWS_API_KEY", "config.properties");
-//        String base_url = "https://newsapi.org/v2/top-headlines?country=%s&apiKey=%s";
-//
-//        try
-//        {
-//            String url = String.format(base_url, country_code, api_key);
-//            HttpClient client = HttpClient.newHttpClient();
-//            HttpRequest req = HttpRequest.newBuilder().uri(URI.create(url)).build();
-//            HttpResponse<String> res = client.send(req, BodyHandlers.ofString());
-//
-//            String res_str = res.body();
-//            return jsonMapper.readValue(res_str, HeadlineListDTO.class);
-//        }
-//
-//        catch (Exception e)
-//        {
-//            logger.warn("error in headlines: " + e.getMessage());
-//            return null;
-//        }
-//    }
+    public static PackingList packingList(Category cat)
+    {
+        String base_url = "https://packingapi.cphbusinessapps.dk/packinglist/%s";
+
+        try
+        {
+            String url = String.format(base_url, cat.toString().toLowerCase());
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest req = HttpRequest.newBuilder().uri(URI.create(url)).build();
+            HttpResponse<String> res = client.send(req, BodyHandlers.ofString());
+
+            String res_str = res.body();
+            return jsonMapper.readValue(res_str, PackingList.class);
+        }
+
+        catch (Exception e)
+        {
+            logger.warn(e.getMessage());
+            return null;
+        }
+    }
 }
 
 

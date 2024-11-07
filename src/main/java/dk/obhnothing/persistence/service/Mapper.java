@@ -29,7 +29,7 @@ public class Mapper
         dto.starttime = t.starttime;
         dto.startposition = t.startposition;
         dto.name = t.name;
-        dto.price = t.price;
+        dto.price = Math.round(t.price * 100.0) / 100.0;
         dto.guide = Mapper.Guide_GuideDTO(t.guide);
         return dto;
     }
@@ -43,7 +43,7 @@ public class Mapper
         t.starttime = dto.starttime;
         t.startposition = dto.startposition;
         t.name = dto.name;
-        t.price = dto.price;
+        t.price = Math.round(dto.price * 100.0) / 100.0;
         t.guide = Mapper.GuideDTO_Guide(dto.guide);
         return t;
     }

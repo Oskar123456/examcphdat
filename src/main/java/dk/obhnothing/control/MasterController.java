@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.obhnothing.persistence.dao.TripDAO;
+import dk.obhnothing.routes.GuideRoutes;
 import dk.obhnothing.routes.TripRoutes;
 import dk.obhnothing.security.controllers.AccessController;
 import dk.obhnothing.security.exceptions.ApiException;
@@ -44,7 +45,7 @@ public class MasterController
             });
             /* APP-SPECIFIC */
             config.router.apiBuilder(TripRoutes.getRoutes());
-            config.router.apiBuilder(guideController.getRoutes());
+            config.router.apiBuilder(GuideRoutes.getRoutes());
         });
         /* EXCEPTIONS */
         AccessController accessController = new AccessController();

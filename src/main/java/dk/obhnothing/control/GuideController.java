@@ -3,6 +3,7 @@ package dk.obhnothing.control;
 import dk.obhnothing.persistence.HibernateConfig;
 import dk.obhnothing.persistence.dao.GuideDAO;
 import dk.obhnothing.persistence.dao.TripDAO;
+import dk.obhnothing.persistence.dto.GuideDTO;
 import dk.obhnothing.persistence.service.Mapper;
 import dk.obhnothing.security.enums.Role;
 import dk.obhnothing.security.exceptions.ApiException;
@@ -32,12 +33,6 @@ public class GuideController
         dao = new GuideDAO();
     }
 
-    public EndpointGroup getRoutes()
-    {
-        return () -> {
-        };
-    }
-
     public void update(Context ctx)
     {
     }
@@ -46,6 +41,7 @@ public class GuideController
     {
         try
         {
+            ctx.json(dao.create(ctx.bodyAsClass(GuideDTO.class)));
             ctx.status(201); // created code
         }
         catch (Exception e)

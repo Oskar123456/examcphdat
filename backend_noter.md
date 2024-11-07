@@ -120,6 +120,8 @@ If you recognize these things in your application, there's a high chance, that R
 
   - An object that carries data between processes in order to
       reduce the number of method calls.
+  - Avoid N+1 problem where a client has to send additional N
+    requests to retrieve an object like GET trip + attendants.
 
 ### Where are DTO classes typically used in the context of RESTful APIs?
 
