@@ -272,10 +272,5 @@ public class TripController
         }
     }
 
-    public void populate(Context ctx)
-    {
-        Populator.PopTrips(5);
-    }
-
 }
 
