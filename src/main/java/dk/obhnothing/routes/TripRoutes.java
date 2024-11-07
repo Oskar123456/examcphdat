@@ -46,6 +46,9 @@ public class TripRoutes
             put("/trips/{id}", tripController::update, Role.ADMIN);
             put("/trip/{id}", tripController::update, Role.ADMIN);
 
+            delete("/trips/{id}", tripController::deleteById, Role.ADMIN);
+            delete("/trip/{id}", tripController::deleteById, Role.ADMIN);
+
             put("/trips/{tripId}/guides/{guideId}", tripController::addguide, Role.ADMIN);
             put("/trip/{tripId}/guides/{guideId}", tripController::addguide, Role.ADMIN);
         };

@@ -260,3 +260,26 @@ Authorization: Bearer {{JWT}}
         client.assert(response.status === 200, "response status is not correct " + response.status);
     });
 %}
+
+###
+# @name [Security] TEST DELETE
+
+DELETE {{url}}/trips/{{trip_id}}
+Authorization: Bearer {{JWT}}
+
+> {%
+    client.test("admin delete", function() {
+        client.assert(response.status === 200, "response status is not 200");
+    });
+%}
+
+###
+# @name [API] GET DELETED FAIL
+
+GET {{url}}/trips/{{trip_id}}
+
+> {%
+    client.test("get deleted", function() {
+        client.assert(response.status === 404, "response status is not correct " + response.status);
+    });
+%}

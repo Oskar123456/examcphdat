@@ -4,7 +4,9 @@ import static dk.obhnothing.persistence.HibernateConfig.Mode.TEST;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.junit.jupiter.api.AfterAll;
@@ -34,6 +36,7 @@ import dk.obhnothing.security.exceptions.ApiException;
 import dk.obhnothing.utilities.Utils;
 import io.javalin.Javalin;
 import io.restassured.RestAssured;
+import io.restassured.path.json.JsonPath;
 import jakarta.persistence.EntityManagerFactory;
 
 public class TestAPIEndPoints_Trip
@@ -157,6 +160,23 @@ public class TestAPIEndPoints_Trip
         assert(status == 400);
     }
 
+    @Test @DisplayName("delete by id") void testDeleteById()
+    {
+        loginAdmin();
+        trips = trip_dao.getAll();
+        int n_trips_orig = trips.size();
+        int n_trips_del = 0;
+        for (TripDTO t : trips) {
+            RestAssured.given().port(port_test)
+                .header("Authorization", "Bearer " + jwt_admin)
+                .when().delete("/api/trips/" + t.id)
+                .then().assertThat().statusCode(200);
+            n_trips_del++;
+            int n_trips_now = trip_dao.getAll().size();
+            assert(n_trips_now + n_trips_del == n_trips_orig);
+        }
+    }
+
     @Test @DisplayName("getAll") void testgetAll() // redundant
     {
         trips = trip_dao.getAll();
@@ -267,6 +287,34 @@ public class TestAPIEndPoints_Trip
         trips = trip_dao.getAll();
         for (TripDTO dto : trips)
             assert(dto.guide.equals(guide));
+    }
+
+    @Test @DisplayName("get sum of each guide") void testgetSumOfEachGuide() // redundant
+    {
+        List<GuideDTO> guides = guide_dao.getAll();
+        trips = trip_dao.getAll();
+        Map<Integer, Double> guide_sums = new HashMap<>();
+
+        for (TripDTO trip : trips) {
+            if (trip.price != null && trip.guide != null && trip.guide.id != null)
+                guide_sums.put(trip.guide.id,
+                        guide_sums.containsKey(trip.guide.id)
+                        ? guide_sums.get(trip.guide.id) + trip.price
+                        : trip.price);
+        }
+
+        try {
+            JsonPath total_sum = RestAssured.given().port(port_test)
+                .header("Authorization", "Bearer " + jwt_admin)
+                .when().get("/api/trips/guidespricesum")
+                .then().assertThat().statusCode(200)
+                .extract().body().jsonPath();
+            for (GuideDTO g : guides) {
+                Float sum = total_sum.get(g.id.toString());
+                if (sum != null)
+                    assert(Math.abs(guide_sums.get(g.id).floatValue() - sum) < 0.01);
+            }
+        } catch (Exception e) { System.err.println(e.getMessage()); assert(false); }
     }
 
     /******************/
