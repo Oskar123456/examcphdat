@@ -3,7 +3,12 @@ package dk.obhnothing.control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.obhnothing.persistence.dao.TripDAO;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import dk.obhnothing.routes.GuideRoutes;
 import dk.obhnothing.routes.TripRoutes;
 import dk.obhnothing.security.controllers.AccessController;
@@ -15,6 +20,7 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.HttpResponseException;
 import io.javalin.http.UnauthorizedResponse;
+import io.javalin.json.JavalinJackson;
 
 public class MasterController
 {
@@ -35,8 +41,15 @@ public class MasterController
     {
         Javalin jav = Javalin.create(config -> {
             /* GENERAL */
+            config.jsonMapper(new JavalinJackson().updateMapper(mapper -> {
+                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false); // Ignore unknown properties in JSON
+                mapper.registerModule(new JavaTimeModule()); // Serialize and deserialize java.time objects
+                mapper.writer(new DefaultPrettyPrinter());
+                mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+                mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
+            }));
             config.showJavalinBanner = false;
-            config.router.contextPath = "api";
+            config.router.contextPath = "/api";
             config.bundledPlugins.enableRouteOverview("/routes");
             config.router.apiBuilder(SecurityRoutes.getSecuredRoutes());
             config.router.apiBuilder(SecurityRoutes.getSecurityRoutes());
@@ -57,6 +70,9 @@ public class MasterController
         /* UNCAUGHT */
         jav.exception(HttpResponseException.class, MasterController::httpErrorExceptionHandler);
         jav.exception(Exception.class, MasterController::generalExceptionHandler);
+        /* CORS */
+        jav.before(MasterController::corsHeaders);
+        jav.options("/*", MasterController::corsHeadersOptions);
 
         return jav;
     }
@@ -103,6 +119,21 @@ public class MasterController
         ctx.status(e.getCode());
         logger.info("An API exception occurred: Code: {}, Message: {}", e.getCode(), e.getMessage());
         ctx.json(Utils.convertToJsonMessage(ctx, "message", e.getMessage()));
+    }
+
+    private static void corsHeaders(Context ctx) {
+        ctx.header("Access-Control-Allow-Origin", "*");
+        ctx.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        ctx.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        ctx.header("Access-Control-Allow-Credentials", "true");
+    }
+
+    private static void corsHeadersOptions(Context ctx) {
+        ctx.header("Access-Control-Allow-Origin", "*");
+        ctx.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        ctx.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        ctx.header("Access-Control-Allow-Credentials", "true");
+        ctx.status(204);
     }
 
 }

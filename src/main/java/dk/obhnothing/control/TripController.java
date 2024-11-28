@@ -14,6 +14,7 @@ import dk.obhnothing.persistence.service.Mapper;
 import dk.obhnothing.persistence.service.Populator;
 import dk.obhnothing.security.enums.Role;
 import dk.obhnothing.security.exceptions.ApiException;
+import dk.obhnothing.utilities.Utils;
 import io.javalin.apibuilder.EndpointGroup;
 import io.javalin.http.Context;
 
