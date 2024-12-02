@@ -55,6 +55,8 @@ public class GuideController
     {
         try
         {
+            List<GuideDTO> dtos = dao.getAll();
+            ctx.json(dtos);
             ctx.status(200);
         }
         catch (Exception e)

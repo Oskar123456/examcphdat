@@ -37,8 +37,8 @@ public class TripRoutes
             get("/trip/packinglist/{category}", tripController::getPackingList, Role.ANYONE);
             get("/trips/guidespricesum", tripController::getSumOfEachGuide, Role.ANYONE);
             get("/trip/guidespricesum", tripController::getSumOfEachGuide, Role.ANYONE);
-            get("/trips/{id}", tripController::getById, Role.ANYONE);
-            get("/trip/{id}", tripController::getById, Role.ANYONE);
+            get("/trips/{id}", tripController::getById, Role.USER);
+            get("/trip/{id}", tripController::getById, Role.USER);
 
             post("/trips", tripController::create, Role.ADMIN);
             post("/trip", tripController::create, Role.ADMIN);

@@ -1,6 +1,7 @@
 package dk.obhnothing.routes;
 
 import static io.javalin.apibuilder.ApiBuilder.post;
+import static io.javalin.apibuilder.ApiBuilder.get;
 
 import dk.obhnothing.control.GuideController;
 import dk.obhnothing.security.enums.Role;
@@ -14,6 +15,7 @@ public class GuideRoutes
     public static EndpointGroup getRoutes()
     {
         return () -> {
+            get("/guides", guideController::getAll, Role.ADMIN);
             post("/guides", guideController::create, Role.ADMIN);
             post("/guide", guideController::create, Role.ADMIN);
         };
