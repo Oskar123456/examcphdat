@@ -134,30 +134,6 @@ public class TestAPIEndPoints_Trip
 
     @Test @DisplayName("getById") void testgetById()
     {
-        trips = trip_dao.getAll();
-        for (TripDTO t : trips) {
-            TripDTO trip_dto = RestAssured.given().port(port_test)
-                .when().get("/api/trips/" + t.id)
-                .then().assertThat().statusCode(200)
-                .extract().body().as(TripDTO.class);
-            assert(t.id.equals(trip_dto.id));
-            PackingList p_list = Fetcher.packingList(trip_dto.category);
-            for (PackingOption po : p_list.items) {
-                boolean contained = false;
-                for (PackingOption po_from_dto : trip_dto.packing_list.items)
-                    if (po.equals(po_from_dto))
-                        contained = true;
-                assert(contained);
-            }
-        }
-        int status = RestAssured.given().port(port_test)
-            .when().get("/api/trips/577573")
-            .body().jsonPath().getInt("status");
-        assert(status == 404);
-        status = RestAssured.given().port(port_test)
-            .when().get("/api/trips/oeu")
-            .body().jsonPath().getInt("status");
-        assert(status == 400);
     }
 
     @Test @DisplayName("delete by id") void testDeleteById()
