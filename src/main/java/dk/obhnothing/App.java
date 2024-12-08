@@ -36,8 +36,8 @@ public class App
         GuideDAO.Init(EMF);
         TripDAO.Init(EMF);
         TripDAO tripDAO = new TripDAO();
-        if (tripDAO.getAll().size() < 5)
-            Populator.PopTrips(1);
+        if (tripDAO.getAll().size() < 25)
+            Populator.PopTrips(20);
 
         try
 
