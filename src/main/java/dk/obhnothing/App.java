@@ -8,9 +8,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import dk.obhnothing.control.MasterController;
 import dk.obhnothing.persistence.HibernateConfig;
-import dk.obhnothing.persistence.dao.GuideDAO;
-import dk.obhnothing.persistence.dao.TripDAO;
+import dk.obhnothing.persistence.dao.PokemonDAO;
 import dk.obhnothing.persistence.dao.UserDAO;
+import dk.obhnothing.persistence.dto.PokemonDTO;
+import dk.obhnothing.persistence.ent.Pokemon;
+import dk.obhnothing.persistence.service.Fetcher;
 import dk.obhnothing.persistence.service.Populator;
 import dk.obhnothing.utilities.Utils;
 import jakarta.persistence.EntityManagerFactory;
@@ -31,19 +33,15 @@ public class App
         HibernateConfig.Init(HibernateConfig.Mode.DEV);
         EMF = HibernateConfig.getEntityManagerFactory();
 
+        PokemonDAO.Init(EMF);
         UserDAO.Init(EMF);
         UserDAO.Populate();
-        GuideDAO.Init(EMF);
-        TripDAO.Init(EMF);
-        TripDAO tripDAO = new TripDAO();
-        if (tripDAO.getAll().size() < 25)
-            Populator.PopTrips(20);
 
         try
 
         {
 
-            MasterController.start(9999);
+            //MasterController.start(9999);
 
             System.out.printf("%n%n[%s] listening...%n%n",
                     (System.getenv("DEPLOYED") == null && System.getenv("PRODUCTION") == null)
@@ -51,6 +49,20 @@ public class App
 
             /* TEST */
 
+            PokemonDTO poke = Fetcher.fetchPokemon(2);
+            Pokemon pokemon = Fetcher.fromDTO(poke);
+
+            System.out.printf("%n%s found in:  %s%n", poke.name, poke.location_area_encounters);
+
+            System.out.println(jsonMapper.writeValueAsString(poke.abilities));
+
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+
+            System.out.println(jsonMapper.writeValueAsString(pokemon));
+            PokemonDAO.create(pokemon);
 
 
         }

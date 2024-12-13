@@ -9,8 +9,6 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import dk.obhnothing.routes.GuideRoutes;
-import dk.obhnothing.routes.TripRoutes;
 import dk.obhnothing.security.controllers.AccessController;
 import dk.obhnothing.security.exceptions.ApiException;
 import dk.obhnothing.security.exceptions.NotAuthorizedException;
@@ -27,11 +25,8 @@ public class MasterController
 
     private static Logger logger = LoggerFactory.getLogger(MasterController.class);
 
-    public static GuideController guideController;
-
     public static Javalin start(int port)
     {
-        guideController = new GuideController();
         Javalin jav = setup();
         jav.start(port);
         return jav;
@@ -57,8 +52,6 @@ public class MasterController
                 generalLogger(ctx, ms);
             });
             /* APP-SPECIFIC */
-            config.router.apiBuilder(TripRoutes.getRoutes());
-            config.router.apiBuilder(GuideRoutes.getRoutes());
         });
         /* EXCEPTIONS */
         AccessController accessController = new AccessController();

@@ -9,8 +9,12 @@ import org.hibernate.service.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.obhnothing.persistence.ent.Guide;
-import dk.obhnothing.persistence.ent.Trip;
+import dk.obhnothing.persistence.ent.Ability;
+import dk.obhnothing.persistence.ent.Habitat;
+import dk.obhnothing.persistence.ent.Move;
+import dk.obhnothing.persistence.ent.Pokemon;
+import dk.obhnothing.persistence.ent.Sprite;
+import dk.obhnothing.persistence.ent.Type;
 import dk.obhnothing.security.entities.Role;
 import dk.obhnothing.security.entities.User;
 import dk.obhnothing.utilities.Utils;
@@ -28,8 +32,12 @@ public class HibernateConfig {
     private static void getAnnotationConfiguration(Configuration configuration) {
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Role.class);
-        configuration.addAnnotatedClass(Trip.class);
-        configuration.addAnnotatedClass(Guide.class);
+        configuration.addAnnotatedClass(Pokemon.class);
+        configuration.addAnnotatedClass(Move.class);
+        configuration.addAnnotatedClass(Ability.class);
+        configuration.addAnnotatedClass(Sprite.class);
+        configuration.addAnnotatedClass(Habitat.class);
+        configuration.addAnnotatedClass(Type.class);
     }
 
     public static void Init(Mode mode) {
