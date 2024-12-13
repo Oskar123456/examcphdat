@@ -52,6 +52,7 @@ public class MasterController
                 generalLogger(ctx, ms);
             });
             /* APP-SPECIFIC */
+            config.router.apiBuilder(PokemonController.getPokemonRoutes());
         });
         /* EXCEPTIONS */
         AccessController accessController = new AccessController();

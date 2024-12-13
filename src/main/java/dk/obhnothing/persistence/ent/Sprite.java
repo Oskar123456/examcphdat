@@ -1,5 +1,7 @@
 package dk.obhnothing.persistence.ent;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,7 +21,7 @@ public class Sprite
     public String front_shiny;
     public String front_shiny_female;
 
-    @OneToOne(mappedBy = "sprites") public Pokemon pokemon;
+    @JsonIgnore @OneToOne(mappedBy = "sprites") public Pokemon pokemon;
 }
 
 

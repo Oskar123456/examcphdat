@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 
+import dk.obhnothing.persistence.dao.PokemonDAO;
 import dk.obhnothing.persistence.dto.NamedApiResource;
 import dk.obhnothing.persistence.dto.PokemonDTO;
 import dk.obhnothing.persistence.ent.Ability;
@@ -42,7 +43,7 @@ public class Fetcher
             HttpRequest req = HttpRequest.newBuilder().uri(URI.create(url)).build();
             HttpResponse<String> res = client.send(req, BodyHandlers.ofString());
             String res_str = res.body();
-            System.out.printf("%s%n", res_str.substring(0, 50));
+            //System.out.printf("%s%n", res_str.substring(0, 50));
             JsonNode json = jsonMapper.readTree(res_str);
 
             JsonNode flavor_text_entries = json.get("flavor_text_entries");
@@ -65,7 +66,7 @@ public class Fetcher
                 }
             }
 
-            move.id = json.get("id").asInt();
+            //move.id = json.get("id").asInt();
             move.name = json.get("name").asText();
             move.power = json.get("power").asDouble();
             move.target = json.get("target").get("name").asText();
@@ -90,7 +91,7 @@ public class Fetcher
             HttpRequest req = HttpRequest.newBuilder().uri(URI.create(url)).build();
             HttpResponse<String> res = client.send(req, BodyHandlers.ofString());
             String res_str = res.body();
-            System.out.printf("%s%n", res_str.substring(0, 50));
+            //System.out.printf("%s%n", res_str.substring(0, 50));
             JsonNode json = jsonMapper.readTree(res_str);
 
             JsonNode flavor_text_entries = json.get("flavor_text_entries");
@@ -135,7 +136,7 @@ public class Fetcher
             HttpRequest req = HttpRequest.newBuilder().uri(URI.create(url)).build();
             HttpResponse<String> res = client.send(req, BodyHandlers.ofString());
             String res_str = res.body();
-            System.out.printf("%s%n", res_str.substring(0, 50));
+            //System.out.printf("%s%n", res_str.substring(0, 50));
             JsonNode json = jsonMapper.readTree(res_str);
 
             JsonNode damage_relations = json.get("damage_relations");
@@ -215,6 +216,11 @@ public class Fetcher
 
     public static Pokemon fromDTO(PokemonDTO dto)
     {
+        if (PokemonDAO.getById(dto.id) != null) {
+            logger.info("pokemon " + dto.name + " (" + dto.id + ") found in db");
+            return PokemonDAO.getById(dto.id);
+        }
+
         Pokemon pokemon = new Pokemon();
 
         String url;
@@ -227,13 +233,21 @@ public class Fetcher
         {
             HttpClient client = HttpClient.newHttpClient();
 
+            pokemon.id = dto.id;
+            pokemon.name = dto.name;
+            pokemon.base_experience = dto.base_experience;
+            pokemon.weight = dto.weight;
+            pokemon.height = dto.height;
+            pokemon.sprites = dto.sprites;
+
+
             /* SPECIES */
             url = dto.species.url;
-            System.out.printf("species url: %s%n%n", url);
+            //System.out.printf("species url: %s%n%n", url);
             req = HttpRequest.newBuilder().uri(URI.create(url)).build();
             res = client.send(req, BodyHandlers.ofString());
             res_str = res.body();
-            System.out.printf("%s%n", res_str.substring(0, 50));
+            //System.out.printf("%s%n", res_str.substring(0, 50));
             json = jsonMapper.readTree(res_str);
 
             JsonNode flavor_text_entries = json.get("flavor_text_entries");
@@ -251,12 +265,12 @@ public class Fetcher
             pokemon.is_mythical = json.get("is_mythical").asBoolean();
             /* EVOLUTION CHAIN */
             url = json.get("evolution_chain").get("url").asText();
-            System.out.printf("evolution_chain url: %s%n%n", url);
+            //System.out.printf("evolution_chain url: %s%n%n", url);
             req = HttpRequest.newBuilder().uri(URI.create(url)).build();
             res = client.send(req, BodyHandlers.ofString());
             res_str = res.body();
             json = jsonMapper.readTree(res_str);
-            System.out.printf("%s%n", res_str.substring(0, 50));
+            //System.out.printf("%s%n", res_str.substring(0, 50));
 
             int order = 0;
             List<String> evo_chain_names = new ArrayList<>();
@@ -295,22 +309,26 @@ public class Fetcher
             pokemon.types = new HashSet<>();
             for (PokemonDTO.Type tp : dto.types) {
                 Type t = fetchType(tp.type.url);
+                t.pokemons = new HashSet<>();
+                t.pokemons.add(pokemon);
                 pokemon.types.add(t);
             }
             /* ABILITIES */
             pokemon.abilities = new HashSet<>();
             for (PokemonDTO.Ability ab : dto.abilities) {
                 Ability t = fetchAbility(ab.ability.url);
+                t.pokemons = new HashSet<>();
+                t.pokemons.add(pokemon);
                 pokemon.abilities.add(t);
             }
             /* MOVES */
-            /*
             pokemon.moves = new HashSet<>();
             for (PokemonDTO.Move mv : dto.moves) {
                 Move t = fetchMove(mv.move.url);
+                t.pokemons = new HashSet<>();
+                t.pokemons.add(pokemon);
                 pokemon.moves.add(t);
             }
-             * */
             /* SIMPLE */
             for (PokemonDTO.Stat stat : dto.stats) {
                 if (stat.stat.name.equals("hp"))
@@ -326,13 +344,6 @@ public class Fetcher
                 if (stat.stat.name.equals("speed"))
                     pokemon.speed = Double.valueOf(stat.base_stat);
             }
-
-            pokemon.id = dto.id;
-            pokemon.name = dto.name;
-            pokemon.base_experience = dto.base_experience;
-            pokemon.weight = dto.weight;
-            pokemon.height = dto.height;
-            pokemon.sprites = dto.sprites;
 
             return pokemon;
         }
@@ -356,7 +367,7 @@ public class Fetcher
             HttpResponse<String> res = client.send(req, BodyHandlers.ofString());
 
             String res_str = res.body();
-            System.out.printf("%s%n", res_str.substring(0, 50));
+            //System.out.printf("%s%n", res_str.substring(0, 50));
             return jsonMapper.readValue(res_str, PokemonDTO.class);
         }
 

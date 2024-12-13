@@ -41,29 +41,13 @@ public class App
 
         {
 
-            //MasterController.start(9999);
+            MasterController.start(9999);
 
             System.out.printf("%n%n[%s] listening...%n%n",
                     (System.getenv("DEPLOYED") == null && System.getenv("PRODUCTION") == null)
                     ? "development" : "deployed");
 
             /* TEST */
-
-            PokemonDTO poke = Fetcher.fetchPokemon(2);
-            Pokemon pokemon = Fetcher.fromDTO(poke);
-
-            System.out.printf("%n%s found in:  %s%n", poke.name, poke.location_area_encounters);
-
-            System.out.println(jsonMapper.writeValueAsString(poke.abilities));
-
-            System.out.println();
-            System.out.println();
-            System.out.println();
-            System.out.println();
-
-            System.out.println(jsonMapper.writeValueAsString(pokemon));
-            PokemonDAO.create(pokemon);
-
 
         }
 
