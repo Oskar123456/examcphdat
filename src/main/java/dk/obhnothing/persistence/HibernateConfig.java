@@ -92,7 +92,7 @@ public class HibernateConfig {
     }
 
     private static Properties setDeployedProperties(Properties props){
-        props.setProperty("hibernate.connection.url", System.getenv("DB_CONN_STR") + System.getenv("DB_NAME_GARDEN"));
+        props.setProperty("hibernate.connection.url", System.getenv("DB_CONN_STR") + System.getenv("DB_NAME"));
         props.setProperty("hibernate.connection.username", System.getenv("DB_USER"));
         props.setProperty("hibernate.connection.password", System.getenv("DB_PW"));
         return props;
