@@ -8,7 +8,7 @@ full: clean build
 	mvn exec:java
 
 build:
-	mvn -q compile
+	mvn compile
 
 .PHONY: clean
 clean: 

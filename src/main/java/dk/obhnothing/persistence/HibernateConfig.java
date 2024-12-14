@@ -80,7 +80,6 @@ public class HibernateConfig {
     }
 
     private static Properties setDevProperties(Properties props){
-        props.put("hibernate.hikari_leakDetectionThreshold", "10000"); // leak detection
         props.setProperty("hibernate.connection.url",
                 Utils.getPropertyValue("DB_CONN_STR", "config.properties")
                 + Utils.getPropertyValue("DB_NAME", "config.properties"));

@@ -139,6 +139,10 @@ public class Fetcher
             //System.out.printf("%s%n", res_str.substring(0, 50));
             JsonNode json = jsonMapper.readTree(res_str);
 
+            type.name = json.get("name").asText();
+            if (PokemonDAO.getTypeByName(type.name) != null)
+                return PokemonDAO.getTypeByName(type.name);
+
             JsonNode damage_relations = json.get("damage_relations");
             JsonNode double_damage_from = damage_relations.get("double_damage_from");
             JsonNode double_damage_to = damage_relations.get("double_damage_to");
@@ -158,7 +162,7 @@ public class Fetcher
                 for (JsonNode ent : double_damage_from) {
                     Type t = new Type();
                     t.name = ent.get("name").asText();
-                    type.double_damage_from.add(t);
+                    type.double_damage_from.add(t.name);
                 }
             }
 
@@ -166,7 +170,7 @@ public class Fetcher
                 for (JsonNode ent : double_damage_to) {
                     Type t = new Type();
                     t.name = ent.get("name").asText();
-                    type.double_damage_to.add(t);
+                    type.double_damage_to.add(t.name);
                 }
             }
 
@@ -174,7 +178,7 @@ public class Fetcher
             for (JsonNode ent : half_damage_from) {
                 Type t = new Type();
                 t.name = ent.get("name").asText();
-                type.half_damage_from.add(t);
+                type.half_damage_from.add(t.name);
             }
             }
 
@@ -182,7 +186,7 @@ public class Fetcher
             for (JsonNode ent : half_damage_to) {
                 Type t = new Type();
                 t.name = ent.get("name").asText();
-                type.half_damage_to.add(t);
+                type.half_damage_to.add(t.name);
             }
             }
 
@@ -190,7 +194,7 @@ public class Fetcher
             for (JsonNode ent : no_damage_from) {
                 Type t = new Type();
                 t.name = ent.get("name").asText();
-                type.no_damage_from.add(t);
+                type.no_damage_from.add(t.name);
             }
             }
 
@@ -198,12 +202,11 @@ public class Fetcher
             for (JsonNode ent : no_damage_to) {
                 Type t = new Type();
                 t.name = ent.get("name").asText();
-                type.no_damage_to.add(t);
+                type.no_damage_to.add(t.name);
             }
             }
 
-            type.name = json.get("name").asText();
-
+            type = PokemonDAO.createType(type);
             return type;
         }
 
