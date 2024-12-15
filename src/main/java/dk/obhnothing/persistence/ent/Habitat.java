@@ -19,7 +19,12 @@ public class Habitat
     @OneToMany(mappedBy = "habitat") @JsonIgnore public Set<Pokemon> pokemons;
 
     public Habitat() {}
-    public Habitat(String name) { this.name = name; }
+    public Habitat(String name) {
+        if (name == null)
+            this.name = "grassland";
+        else
+            this.name = name;
+    }
 }
 
 

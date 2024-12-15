@@ -291,7 +291,10 @@ public class Fetcher
                     }
                     else {
                         for (JsonNode ent : evolution_details) {
-                            pokemon.min_level = Integer.parseInt(ent.get("min_level").asText());
+                            if (ent.get("min_level") == null || ent.get("min_level").isNull())
+                                pokemon.min_level = 0;
+                            else
+                                pokemon.min_level = Integer.parseInt(ent.get("min_level").asText());
                             break;
                         }
                     }
@@ -354,6 +357,7 @@ public class Fetcher
         catch (Exception e)
         {
             logger.warn(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
