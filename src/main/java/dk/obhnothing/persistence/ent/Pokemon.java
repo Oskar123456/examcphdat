@@ -4,6 +4,8 @@ import java.util.Set;
 
 import org.hibernate.annotations.NaturalId;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinTable;
@@ -52,6 +54,5 @@ public class Pokemon
     inverseJoinColumns = @JoinColumn(name = "pokemon_id"))
     public Set<Type> types;
     @OneToOne public Sprite sprites;
-
 }
 

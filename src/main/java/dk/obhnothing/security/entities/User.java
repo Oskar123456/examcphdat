@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.mindrot.jbcrypt.BCrypt;
 
+import dk.obhnothing.persistence.ent.Pokemon;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;

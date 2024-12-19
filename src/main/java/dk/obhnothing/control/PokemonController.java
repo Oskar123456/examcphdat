@@ -1,12 +1,19 @@
 package dk.obhnothing.control;
 
 import static io.javalin.apibuilder.ApiBuilder.get;
+import static io.javalin.apibuilder.ApiBuilder.post;
+
+import java.util.Collections;
+import java.util.List;
+
 import static io.javalin.apibuilder.ApiBuilder.path;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.bugelhartmann.UserDTO;
 import dk.obhnothing.persistence.dao.PokemonDAO;
+import dk.obhnothing.persistence.dao.UserDAO;
 import dk.obhnothing.persistence.dto.PokemonDTO;
 import dk.obhnothing.persistence.ent.Habitat;
 import dk.obhnothing.persistence.ent.Pokemon;
@@ -30,8 +37,11 @@ public class PokemonController
                 get("/type", PokemonController::getTypes, Role.ANYONE);
                 get("/habitat/{name}", PokemonController::getByHabitat, Role.ANYONE);
                 get("/habitat", PokemonController::getHabitats, Role.ANYONE);
+                get("/mypokemon", PokemonController::getMyPokemons, Role.USER);
                 get("/{id}", PokemonController::getPokemon, Role.ANYONE);
                 get("/", PokemonController::getPokemons, Role.ANYONE);
+
+                post("/getpack", PokemonController::getPack, Role.USER);
             });
         };
     }
@@ -78,6 +88,36 @@ public class PokemonController
             String path_param = ctx.pathParam("name");
             Habitat h = new Habitat(path_param);
             ctx.json(PokemonDAO.getByHabitat(h));
+            ctx.status(200);
+        }
+        catch (Exception e) {
+            throw new ApiException(404, e.getMessage());
+        }
+    }
+
+    public static void getPack(Context ctx)
+    {
+        try {
+            List<Pokemon> allP = PokemonDAO.getAll();
+            Collections.shuffle(allP);
+            List<Pokemon> pack = allP.subList(0, 5);
+
+            UserDTO u = ctx.attribute("user");
+            UserDAO.addPokemon(u, pack);
+
+            ctx.json(pack);
+            ctx.status(200);
+        }
+        catch (Exception e) {
+            throw new ApiException(404, e.getMessage());
+        }
+    }
+
+    public static void getMyPokemons(Context ctx)
+    {
+        try {
+            UserDTO u = ctx.attribute("user");
+            ctx.json(UserDAO.getPokemon(u));
             ctx.status(200);
         }
         catch (Exception e) {

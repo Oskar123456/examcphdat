@@ -62,7 +62,6 @@ public class SecurityDAO implements ISecurityDAO {
             em.getTransaction().commit();
             return userEntity;
         }catch (Exception e){
-            e.printStackTrace();
             throw new ApiException(400, e.getMessage());
         }
     }

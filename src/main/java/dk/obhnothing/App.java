@@ -35,6 +35,7 @@ public class App
 
         PokemonDAO.Init(EMF);
         UserDAO.Init(EMF);
+        UserDAO.initUserPokeStuff();
         UserDAO.Populate();
 
         try
